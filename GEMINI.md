@@ -60,6 +60,58 @@ E atualize `TOTAL_LESSONS` em `src/lib/utils.ts`.
 4. **Siga o mapa CEFR** (seção 4) para atribuir o `level` correto
 5. **Execute o checklist de qualidade** (seção 8) antes de entregar
 6. **Termine sempre com um `BATCH_N_M_SUMMARY`** exportado — é o contexto para o próximo batch
+7. **Gere o `PROMPT_BATCH_NEXT.md`** ao concluir — ver seção 3.1
+
+### 3.1 Geração Obrigatória do Próximo Prompt
+
+**Ao finalizar qualquer batch, você deve sempre gerar também o arquivo `src/lib/lessons/PROMPT_BATCH_X.md`** para o batch seguinte. Este arquivo é o que permite que a cadeia de geração continue sem perda de contexto.
+
+O arquivo deve ser **autocontido** — quem for usá-lo não terá acesso a nenhum outro arquivo do projeto. Inclua:
+
+```
+src/lib/lessons/PROMPT_BATCH_{N+1}.md
+```
+
+**Estrutura obrigatória do arquivo:**
+
+```markdown
+# Prompt para Gemini — Gerar batch_{N+1}_{M+1}.ts
+
+## Contexto: Projeto FLUX
+[breve descrição do projeto — copie da seção 1 deste GEMINI.md]
+
+## O que você vai gerar
+[arquivo alvo, IDs das lições, como importar em lessons.ts]
+
+## Estruturas dos dias {N+1} a {M+1}
+[tabela com dia | estrutura | módulo, seguindo o mapa da seção 10]
+
+## Interface TypeScript obrigatória
+[cole a interface Lesson completa da seção 7]
+
+## BATCH_{N}_{M}_SUMMARY — O que já foi ensinado
+[cole o objeto BATCH_SUMMARY recém-gerado — é a única fonte de continuidade]
+
+## Regras de densidade para o Batch {número}
+[cole as regras específicas do batch número correto da tabela da seção 6]
+
+## Regras de qualidade (resumo)
+[cole o resumo da seção 8]
+
+## Regras de segurança (resumo)
+[cole o resumo da seção 9]
+
+## Níveis CEFR esperados
+[tabela dia | estrutura | nível para os 7 dias do próximo batch]
+
+## Formato de saída esperado
+[template com import, lessons array e BATCH_SUMMARY do próximo]
+
+---
+Gere o arquivo completo agora.
+```
+
+**Regra:** o `PROMPT_BATCH_X.md` deve ser gerado **na mesma resposta** que o `batch_N_M.ts`, nunca separadamente. Se o modelo encerrar a resposta sem gerar o prompt do próximo batch, a resposta está incompleta.
 
 ---
 
@@ -417,6 +469,9 @@ export const BATCH_N_M_SUMMARY = {
 
 ## 12. Checklist antes de Entregar o Batch
 
+**O batch está completo somente quando todos os itens abaixo estiverem marcados.**
+
+### Conteúdo das lições
 - [ ] 7 lições com IDs sequenciais corretos
 - [ ] Campo `level` preenchido em todas as lições (seguindo seção 4)
 - [ ] Nenhuma string com apóstrofo usando aspas simples
@@ -426,6 +481,16 @@ export const BATCH_N_M_SUMMARY = {
 - [ ] `retrieval_reference` começa com `"Exemplo: '..."` e usa a estrutura pedida
 - [ ] URLs de TED Talks são reais (não inventadas)
 - [ ] `onelook_word` é uma única palavra sem espaços
-- [ ] `BATCH_N_M_SUMMARY` exportado ao final com todos os campos preenchidos
-- [ ] `connects_to_next` descreve o próximo batch com estruturas e justificativa
+
+### Fechamento do batch
+- [ ] `BATCH_N_M_SUMMARY` exportado ao final do arquivo `.ts` com todos os campos preenchidos
+- [ ] `connects_to_next` descreve o próximo batch com estruturas e justificativa pedagógica
 - [ ] Compilação TypeScript sem erros (sem `'` dentro de `'...'`)
+
+### Continuidade — OBRIGATÓRIO
+- [ ] **`PROMPT_BATCH_{N+1}.md` gerado na mesma resposta** (ver seção 3.1)
+- [ ] O prompt do próximo batch inclui o `BATCH_N_M_SUMMARY` recém-criado como contexto
+- [ ] O prompt do próximo batch é autocontido — não depende de nenhum outro arquivo
+- [ ] O prompt termina com a instrução `Gere o arquivo completo agora.`
+
+> ⚠️ Uma resposta que entrega o `.ts` mas não entrega o `PROMPT_BATCH_NEXT.md` está **incompleta**.
