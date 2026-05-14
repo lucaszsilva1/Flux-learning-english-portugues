@@ -5,23 +5,40 @@
   let days = Array.from({ length: TOTAL_LESSONS }, (_, i) => i + 1)
 
   let pinId = $derived(($userdata['pin_lesson_id'] as number) || 0)
+  let progress = $derived(Math.round(($currentDay / TOTAL_LESSONS) * 100))
+
+  let mobileOpen = $state(false)
 
   function handleDayClick(id: number) {
     if (id > $currentDay) return
     scrollToLesson(id)
+    mobileOpen = false
   }
 
   function resumePin() {
     if (pinId) scrollToLesson(pinId)
+    mobileOpen = false
   }
 
   function toggleSidebar() {
     $sidebarCollapsed = !$sidebarCollapsed
     userdata.setField('sidebar_collapsed', $sidebarCollapsed)
   }
+
+  export function openMobile() {
+    mobileOpen = true
+  }
+
+  export function closeMobile() {
+    mobileOpen = false
+  }
 </script>
 
-<aside class="sidebar" class:collapsed={$sidebarCollapsed}>
+{#if mobileOpen}
+  <div class="mobile-backdrop" onclick={() => mobileOpen = false} aria-hidden="true"></div>
+{/if}
+
+<aside class="sidebar" class:collapsed={$sidebarCollapsed} class:mobile-open={mobileOpen}>
   <div class="sidebar-top">
     {#if !$sidebarCollapsed}
       <div class="streak-block">
@@ -33,6 +50,15 @@
       {$sidebarCollapsed ? '→' : '←'}
     </button>
   </div>
+
+  {#if !$sidebarCollapsed}
+    <div class="progress-block">
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" style="width: {progress}%"></div>
+      </div>
+      <span class="progress-label">{progress}% completo</span>
+    </div>
+  {/if}
 
   {#if !$sidebarCollapsed && pinId > 0}
     <button class="resume-btn" onclick={resumePin} title="Voltar para onde você parou">
@@ -91,10 +117,48 @@
     border-right: 1px solid rgba(0,0,0,0.08);
     width: 220px;
     flex-shrink: 0;
+    z-index: 100;
   }
   aside.collapsed {
     width: 48px;
   }
+
+  /* Mobile: drawer overlay */
+  @media (max-width: 768px) {
+    aside {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 260px;
+      transform: translateX(-100%);
+      box-shadow: var(--shadow-md);
+    }
+    aside.mobile-open {
+      transform: translateX(0);
+    }
+    aside.collapsed {
+      width: 260px;
+      transform: translateX(-100%);
+    }
+    aside.collapsed.mobile-open {
+      transform: translateX(0);
+    }
+  }
+
+  .mobile-backdrop {
+    display: none;
+  }
+  @media (max-width: 768px) {
+    .mobile-backdrop {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 99;
+    }
+  }
+
   .sidebar-top {
     display: flex;
     align-items: center;
@@ -135,6 +199,30 @@
     flex-shrink: 0;
   }
   .toggle-btn:hover { background: rgba(0,0,0,0.04); }
+
+  .progress-block {
+    padding: 10px 14px 8px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .progress-bar-track {
+    height: 4px;
+    background: rgba(0,0,0,0.07);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 5px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--color-orange-500);
+    border-radius: 99px;
+    transition: width 0.6s ease;
+  }
+  .progress-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(13,18,37,0.35);
+    letter-spacing: 0.04em;
+  }
 
   .resume-btn {
     display: flex;

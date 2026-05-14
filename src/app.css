@@ -167,6 +167,19 @@ textarea:focus {
   background: rgba(0,0,0,0.1);
 }
 
+@media (max-width: 768px) {
+  .lesson-card {
+    padding: 20px 16px;
+    margin-bottom: 28px;
+  }
+  .block-card {
+    padding: 16px;
+  }
+  .workspace-card {
+    padding: 16px;
+  }
+}
+
 .highlight {
   position: relative;
   display: inline-block;

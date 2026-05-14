@@ -62,10 +62,10 @@
     background: var(--color-neutral-50);
     border-radius: 4px;
     padding: 2px 8px;
-    min-width: 160px;
     flex-shrink: 0;
     color: var(--color-purple-400);
     font-weight: 600;
+    word-break: break-word;
   }
   .note {
     color: rgba(13,18,37,0.6);
