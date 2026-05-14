@@ -1,42 +1,128 @@
-# sv
+# FLUX — Sistema de Imersão em Inglês
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+[![Licença: MIT](https://img.shields.io/badge/Licen%C3%A7a-MIT-blue.svg)](LICENSE)
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-5-orange.svg)](https://svelte.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org)
+[![Deploy](https://img.shields.io/badge/Deploy-Vercel-black.svg)](https://vercel.com)
 
-## Creating a project
+> Workspace pessoal de imersão em inglês — uma lição por dia, prática deliberada, sem distrações.
 
-If you're seeing this, you've probably already done this step. Congrats!
+---
 
-```sh
-# create a new project
-npx sv create my-app
-```
+## O que é o FLUX?
 
-To recreate this project with the same configuration:
+O FLUX não é um curso. Não é um app de idiomas. É um **ambiente de trabalho** para quem quer aprender inglês de verdade.
 
-```sh
-# recreate this project
-npx sv@0.15.3 create --template minimal --types ts --install npm .
-```
+Cada dia desbloqueado pelo calendário adiciona uma nova lição ao final da página. Você rola para baixo para avançar, para cima para revisar. Sem gamificação, sem anúncios, sem login — só você e a língua.
 
-## Developing
+**84 lições disponíveis** (expandindo até 180), organizadas em 3 módulos:
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+| Módulo | Dias | Foco |
+|--------|------|------|
+| Present Structures | 1–35 | Estruturas do presente e futuro próximo |
+| Past & Modal | 36–70 | Passado, modais e estruturas de opinião |
+| Advanced Use | 71–180 | Conectores, nuance e fluência avançada |
 
-```sh
+---
+
+## Funcionalidades
+
+- **11 blocos por lição** — estrutura, fonética, anatomia, vocabulário, exemplos, variações, erros comuns, retrieval, drills, produção livre e recursos diários
+- **Progresso no localStorage** — sem backend, sem conta, sem nuvem. Seus dados ficam no seu browser.
+- **Sidebar colapsável** — lista todos os dias, mostra streak e pin de posição
+- **Pin de posição** — lembra exatamente onde você parou na última sessão
+- **Arquitetura extensível** — adicione novas lições com IA usando `GEMINI.md`
+- **Site estático** — hospede de graça em qualquer CDN
+
+---
+
+## Tecnologias
+
+- [SvelteKit](https://svelte.dev) com `@sveltejs/adapter-static`
+- [TypeScript](https://www.typescriptlang.org) em todos os arquivos
+- `localStorage` para toda a persistência — sem banco de dados, sem autenticação, sem API
+
+---
+
+## Como usar localmente
+
+```bash
+git clone https://github.com/seu-usuario/flux.git
+cd flux
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+Acesse `http://localhost:5173`.
 
-To create a production version of your app:
+Para verificar tipos e build:
 
-```sh
-npm run build
+```bash
+npm run check   # TypeScript + Svelte
+npm run build   # build estático em /build
+npm run preview # pré-visualizar o build
 ```
 
-You can preview the production build with `npm run preview`.
+---
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Deploy no Vercel
+
+O projeto inclui `vercel.json` configurado para o adapter-static. Zero configuração extra necessária.
+
+1. Faça push do repositório para o GitHub
+2. Acesse [vercel.com/new](https://vercel.com/new)
+3. Importe o repositório
+4. Clique em **Deploy**
+
+O Vercel detecta automaticamente o `vercel.json` e faz o build correto.
+
+---
+
+## Adicionando mais lições
+
+As lições são organizadas em batches de 7 dias por arquivo TypeScript em `src/lib/lessons/`.
+
+```
+src/lib/lessons/
+  batch_1_7.ts      # dias 1-7
+  batch_8_14.ts     # dias 8-14
+  ...
+```
+
+Para expandir o conteúdo com IA:
+
+1. Consulte `GEMINI.md` — instruções completas para o Google Gemini gerar novos batches
+2. Cada batch gerado inclui um `PROMPT_BATCH_N.md` pronto para a próxima rodada
+3. Após gerar, adicione o import em `src/lib/lessons.ts` e atualize `TOTAL_LESSONS` em `src/lib/utils.ts`
+
+---
+
+## Estrutura do projeto
+
+```
+src/
+  lib/
+    lessons.ts          # entry point — agrega todos os batches
+    lessons/            # um arquivo por semana de lições
+    types.ts            # interfaces TypeScript
+    store.ts            # stores Svelte (userdata, currentDay, streak)
+    utils.ts            # helpers e lógica de negócio
+  components/
+    Sidebar.svelte
+    LessonBlock.svelte
+    WelcomeHeader.svelte
+    blocks/             # 11 componentes de bloco
+  routes/
+    +page.svelte        # única rota do app
+    +layout.svelte
+static/
+  home.svg
+GEMINI.md               # instruções para gerar lições com IA
+CLAUDE.md               # instruções para Claude Code
+```
+
+---
+
+## Licença
+
+[MIT](LICENSE) — use, modifique e distribua livremente.

@@ -1,6 +1,6 @@
 import type { UserData } from './types'
 
-export const TOTAL_LESSONS = 49
+export const TOTAL_LESSONS = 84
 
 export function getAvailableDays(_startDate: string): number {
   return TOTAL_LESSONS
