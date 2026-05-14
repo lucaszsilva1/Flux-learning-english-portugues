@@ -439,7 +439,7 @@ export const lessons: Lesson[] = [
     drills: [
       { instruction: 'Forme o pedido polido.', input: 'Você pode me ajudar? (Use a forma polida)', answer: 'Could you help me?' },
       { instruction: 'Peça para a pessoa avisar.', input: 'Você poderia me avisar?', answer: 'Could you let me know?' },
-      { instruction: 'Revisão (Dia 10): Combine pedido com a oferta de checagem. "Você poderia me dar um momento? Deixa eu checar."', answer: 'Could you give me a moment? Let me check.' },
+      { instruction: 'Revisão (Dia 10): Combine pedido com oferta de checagem.', input: '"Você poderia me dar um momento? Deixa eu checar."', answer: 'Could you give me a moment? Let me check.' },
       { instruction: 'Adicione a condição temporal.', input: 'Could you send it to me...', answer: "Could you send it to me when it's ready?" },
       { instruction: 'Transforme o informal em formal.', input: 'Can you review this PR?', answer: 'Could you review this PR?' }
     ],

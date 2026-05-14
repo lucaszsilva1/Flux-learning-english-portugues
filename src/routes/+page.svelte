@@ -10,19 +10,39 @@
   import { lessons } from '$lib/lessons'
   import Sidebar from '../components/Sidebar.svelte'
   import LessonBlock from '../components/LessonBlock.svelte'
+  import WelcomeHeader from '../components/WelcomeHeader.svelte'
 
   let available = $derived(lessons.filter(l => l.id <= $currentDay))
+  let mainEl: HTMLElement
 
   onMount(() => {
-    scrollToLesson($currentDay)
+    const pin = ($userdata['pin_lesson_id'] as number) || $currentDay
+    scrollToLesson(pin)
+
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const id = parseInt(entry.target.id.replace('dia-', ''))
+          if (!isNaN(id)) userdata.setField('pin_lesson_id', id)
+        }
+      }
+    }, {
+      root: mainEl,
+      rootMargin: '-10% 0px -80% 0px',
+      threshold: 0
+    })
+
+    mainEl.querySelectorAll('article[id^="dia-"]').forEach(el => observer.observe(el))
+    return () => observer.disconnect()
   })
 </script>
 
 <div class="app-layout">
   <Sidebar />
 
-  <main class="main-content">
+  <main class="main-content" bind:this={mainEl}>
     <div class="lessons-container">
+      <WelcomeHeader />
       {#each available as lesson, i}
         {#if i > 0}
           <div class="lesson-separator">DIA {lesson.id}</div>
@@ -48,6 +68,7 @@
     flex: 1;
     overflow-y: auto;
     padding: 40px 32px;
+    height: 100vh;
   }
   .lessons-container {
     max-width: 760px;

@@ -43,5 +43,5 @@ export interface DailyResources {
 
 export interface UserData {
   start_date: string
-  [key: string]: string | boolean | Record<number, string> | Record<number, boolean>
+  [key: string]: string | number | boolean | Record<number, string> | Record<number, boolean>
 }

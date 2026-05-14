@@ -4,9 +4,15 @@
 
   let days = Array.from({ length: TOTAL_LESSONS }, (_, i) => i + 1)
 
+  let pinId = $derived(($userdata['pin_lesson_id'] as number) || 0)
+
   function handleDayClick(id: number) {
     if (id > $currentDay) return
     scrollToLesson(id)
+  }
+
+  function resumePin() {
+    if (pinId) scrollToLesson(pinId)
   }
 
   function toggleSidebar() {
@@ -28,22 +34,39 @@
     </button>
   </div>
 
+  {#if !$sidebarCollapsed && pinId > 0}
+    <button class="resume-btn" onclick={resumePin} title="Voltar para onde você parou">
+      <span class="resume-pin">◉</span>
+      <span class="resume-label">Continuar no Dia {String(pinId).padStart(2, '0')}</span>
+    </button>
+  {/if}
+
+  {#if $sidebarCollapsed && pinId > 0}
+    <button class="resume-btn-collapsed" onclick={resumePin} title="Continuar no Dia {pinId}">
+      ◉
+    </button>
+  {/if}
+
   {#if !$sidebarCollapsed}
     <nav class="days-list">
       {#each days as id}
         {@const isPracticed = !!$userdata[`${id}_practiced_at`]}
         {@const isActive = id === $currentDay}
         {@const isLocked = id > $currentDay}
+        {@const isPinned = id === pinId}
         <button
           class="sidebar-day"
           class:active={isActive}
           class:locked={isLocked}
+          class:pinned={isPinned}
           onclick={() => handleDayClick(id)}
           disabled={isLocked}
         >
           <span class="day-num">{String(id).padStart(2, '0')}</span>
           {#if isLocked}
             <span class="day-icon">🔒</span>
+          {:else if isPinned}
+            <span class="pin-dot" title="Você parou aqui"></span>
           {:else if isPracticed}
             <span class="day-icon done">✓</span>
           {:else}
@@ -112,6 +135,49 @@
     flex-shrink: 0;
   }
   .toggle-btn:hover { background: rgba(0,0,0,0.04); }
+
+  .resume-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(242,106,46,0.06);
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    cursor: pointer;
+    font-family: inherit;
+    transition: var(--transition);
+    text-align: left;
+  }
+  .resume-btn:hover { background: rgba(242,106,46,0.12); }
+  .resume-pin {
+    color: var(--color-orange-500);
+    font-size: 14px;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .resume-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-orange-500);
+  }
+
+  .resume-btn-collapsed {
+    background: none;
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    width: 100%;
+    padding: 10px 0;
+    cursor: pointer;
+    color: var(--color-orange-500);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .resume-btn-collapsed:hover { background: rgba(242,106,46,0.06); }
+
   .days-list {
     padding: 8px 0;
     overflow-y: auto;
@@ -136,6 +202,9 @@
     border-left-color: var(--color-orange-500);
     background: rgba(242,106,46,0.06);
   }
+  .sidebar-day.pinned {
+    border-left-color: var(--color-orange-500);
+  }
   .sidebar-day.locked {
     color: rgba(13,18,37,0.3);
     cursor: default;
@@ -146,7 +215,8 @@
     font-weight: 600;
     color: inherit;
   }
-  .sidebar-day.active .day-num { color: var(--color-orange-500); }
+  .sidebar-day.active .day-num,
+  .sidebar-day.pinned .day-num { color: var(--color-orange-500); }
   .day-icon {
     font-size: 12px;
   }
@@ -156,5 +226,13 @@
     height: 6px;
     border-radius: 50%;
     background: rgba(0,0,0,0.15);
+  }
+  .pin-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-orange-500);
+    box-shadow: 0 0 0 2px rgba(242,106,46,0.25);
+    flex-shrink: 0;
   }
 </style>
