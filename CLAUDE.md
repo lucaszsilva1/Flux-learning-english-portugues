@@ -4,6 +4,8 @@
 - **Package Manager**: npm
 - **Add-ons**: none
 
+> **Ver também:** [`VOCAB.md`](./VOCAB.md) — módulo de vocabulário: as 1000 palavras mais comuns do inglês com flashcard SRS, quiz e browse.
+
 ---
 
 # CLAUDE.md — FLUX
