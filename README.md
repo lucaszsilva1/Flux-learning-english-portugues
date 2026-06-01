@@ -27,12 +27,24 @@ Cada dia desbloqueado pelo calendário adiciona uma nova lição ao final da pá
 
 ## Funcionalidades
 
+### Lições (`/`)
 - **11 blocos por lição** — estrutura, fonética, anatomia, vocabulário, exemplos, variações, erros comuns, retrieval, drills, produção livre e recursos diários
-- **Progresso no localStorage** — sem backend, sem conta, sem nuvem. Seus dados ficam no seu browser.
 - **Sidebar colapsável** — lista todos os dias, mostra streak e pin de posição
 - **Pin de posição** — lembra exatamente onde você parou na última sessão
-- **Arquitetura extensível** — adicione novas lições com IA usando `GEMINI.md`
-- **Site estático** — hospede de graça em qualquer CDN
+
+### Vocabulário (`/vocab`)
+- **100 palavras mais comuns do inglês** (expandindo até 1000) com SRS integrado
+- **Flashcard** — revisão com espaçamento repetido
+- **Quiz** — 10 questões rápidas por sessão
+- **Browse** — explorar e marcar palavras como conhecidas
+
+### Navegação global
+- **Navbar responsiva** — alterna entre Lições e Vocabulário em qualquer tela
+- **Mobile-first** — hambúrguer abre o índice de lições; layout adaptado para celular
+
+### Persistência
+- **Progresso no localStorage** — sem backend, sem conta, sem nuvem. Seus dados ficam no seu browser.
+- **Streak** — contador de dias consecutivos de prática
 
 ---
 
@@ -47,8 +59,8 @@ Cada dia desbloqueado pelo calendário adiciona uma nova lição ao final da pá
 ## Como usar localmente
 
 ```bash
-git clone https://github.com/seu-usuario/flux.git
-cd flux
+git clone https://github.com/lucaszsilva1/Flux-learning-english-portugues.git
+cd Flux-learning-english-portugues
 npm install
 npm run dev
 ```
@@ -95,6 +107,8 @@ Para expandir o conteúdo com IA:
 2. Cada batch gerado inclui um `PROMPT_BATCH_N.md` pronto para a próxima rodada
 3. Após gerar, adicione o import em `src/lib/lessons.ts` e atualize `TOTAL_LESSONS` em `src/lib/utils.ts`
 
+Para o módulo de vocabulário, consulte `VOCAB.md`.
+
 ---
 
 ## Estrutura do projeto
@@ -105,19 +119,24 @@ src/
     lessons.ts          # entry point — agrega todos os batches
     lessons/            # um arquivo por semana de lições
     types.ts            # interfaces TypeScript
-    store.ts            # stores Svelte (userdata, currentDay, streak)
+    store.ts            # stores Svelte (userdata, currentDay, streak, mobileMenuOpen)
     utils.ts            # helpers e lógica de negócio
+    vocab/              # módulo de vocabulário (srs, store, types, words)
   components/
-    Sidebar.svelte
+    Navbar.svelte       # navbar global responsiva
+    Sidebar.svelte      # índice de dias (colapsável, drawer no mobile)
     LessonBlock.svelte
     WelcomeHeader.svelte
-    blocks/             # 11 componentes de bloco
+    blocks/             # 11 componentes de bloco de lição
+    vocab/              # componentes de flashcard, quiz, browse
   routes/
-    +page.svelte        # única rota do app
-    +layout.svelte
+    +page.svelte        # página de lições
+    +layout.svelte      # layout raiz com Navbar
+    vocab/              # rotas /vocab, /vocab/browse, /vocab/flashcard, /vocab/quiz
 static/
   home.svg
 GEMINI.md               # instruções para gerar lições com IA
+VOCAB.md                # especificação do módulo de vocabulário
 CLAUDE.md               # instruções para Claude Code
 ```
 
