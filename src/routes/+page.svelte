@@ -9,11 +9,6 @@
 
   let available = $derived(lessons.filter(l => l.id <= $currentDay))
   let mainEl: HTMLElement
-  let sidebar: Sidebar
-
-  function openSidebar() {
-    sidebar?.openMobile()
-  }
 
   onMount(() => {
     const pin = ($userdata['pin_lesson_id'] as number) || $currentDay
@@ -38,13 +33,9 @@
 </script>
 
 <div class="app-layout">
-  <Sidebar bind:this={sidebar} />
+  <Sidebar />
 
   <main class="main-content" bind:this={mainEl}>
-    <button class="mobile-menu-btn" onclick={openSidebar} aria-label="Abrir menu">
-      <span></span><span></span><span></span>
-    </button>
-
     <div class="lessons-container">
       <WelcomeHeader />
       {#each available as lesson, i}
@@ -66,13 +57,13 @@
 <style>
   .app-layout {
     display: flex;
-    min-height: 100vh;
+    height: 100%;
   }
   .main-content {
     flex: 1;
     overflow-y: auto;
     padding: 40px 32px;
-    height: 100vh;
+    height: 100%;
   }
   .lessons-container {
     max-width: 760px;
@@ -85,35 +76,12 @@
     font-size: 15px;
   }
 
-  .mobile-menu-btn {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    background: white;
-    border: 1px solid rgba(0,0,0,0.1);
-    border-radius: var(--radius-sm);
-    padding: 10px 11px;
-    cursor: pointer;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow-sm);
-  }
-  .mobile-menu-btn span {
-    display: block;
-    width: 18px;
-    height: 2px;
-    background: var(--color-navy-900);
-    border-radius: 2px;
-  }
-
   @media (max-width: 768px) {
     .main-content {
       padding: 16px;
     }
     .lessons-container {
       max-width: 100%;
-    }
-    .mobile-menu-btn {
-      display: flex;
     }
   }
 </style>

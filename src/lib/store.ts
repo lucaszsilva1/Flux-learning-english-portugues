@@ -54,3 +54,4 @@ export const streak = derived(userdata, $ud => calculateStreak($ud))
 export const currentDay = derived(userdata, $ud => getAvailableDays($ud.start_date))
 
 export const sidebarCollapsed = writable(false)
+export const mobileMenuOpen = writable(false)

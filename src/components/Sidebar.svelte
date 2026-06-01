@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { userdata, streak, currentDay, sidebarCollapsed } from '$lib/store'
+  import { userdata, streak, currentDay, sidebarCollapsed, mobileMenuOpen } from '$lib/store'
   import { TOTAL_LESSONS, scrollToLesson } from '$lib/utils'
 
   let days = Array.from({ length: TOTAL_LESSONS }, (_, i) => i + 1)
@@ -7,38 +7,28 @@
   let pinId = $derived(($userdata['pin_lesson_id'] as number) || 0)
   let progress = $derived(Math.round(($currentDay / TOTAL_LESSONS) * 100))
 
-  let mobileOpen = $state(false)
-
   function handleDayClick(id: number) {
     if (id > $currentDay) return
     scrollToLesson(id)
-    mobileOpen = false
+    $mobileMenuOpen = false
   }
 
   function resumePin() {
     if (pinId) scrollToLesson(pinId)
-    mobileOpen = false
+    $mobileMenuOpen = false
   }
 
   function toggleSidebar() {
     $sidebarCollapsed = !$sidebarCollapsed
     userdata.setField('sidebar_collapsed', $sidebarCollapsed)
   }
-
-  export function openMobile() {
-    mobileOpen = true
-  }
-
-  export function closeMobile() {
-    mobileOpen = false
-  }
 </script>
 
-{#if mobileOpen}
-  <div class="mobile-backdrop" onclick={() => mobileOpen = false} aria-hidden="true"></div>
+{#if $mobileMenuOpen}
+  <div class="mobile-backdrop" onclick={() => ($mobileMenuOpen = false)} aria-hidden="true"></div>
 {/if}
 
-<aside class="sidebar" class:collapsed={$sidebarCollapsed} class:mobile-open={mobileOpen}>
+<aside class="sidebar" class:collapsed={$sidebarCollapsed} class:mobile-open={$mobileMenuOpen}>
   <div class="sidebar-top">
     {#if !$sidebarCollapsed}
       <div class="streak-block">
@@ -108,7 +98,7 @@
   aside {
     position: sticky;
     top: 0;
-    height: 100vh;
+    height: 100%;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -123,13 +113,12 @@
     width: 48px;
   }
 
-  /* Mobile: drawer overlay */
   @media (max-width: 768px) {
     aside {
       position: fixed;
-      top: 0;
+      top: var(--navbar-height);
       left: 0;
-      height: 100vh;
+      height: calc(100vh - var(--navbar-height));
       width: 260px;
       transform: translateX(-100%);
       box-shadow: var(--shadow-md);
@@ -154,6 +143,7 @@
       display: block;
       position: fixed;
       inset: 0;
+      top: var(--navbar-height);
       background: rgba(0,0,0,0.4);
       z-index: 99;
     }
